@@ -1,0 +1,553 @@
+/*
+ * opencode-ui-tweaks. Colours come from the app's theme variables, each with a neutral fallback so the list stays
+ * readable if a variable is renamed.
+ */
+
+/* While the plugin's list is mounted inside the app's Inbox list, the app's own content is hidden. Removing the
+   plugin's root (disabling the plugin, or an app update that moves things) brings the built-in list back. */
+[data-slot="sidebar-inbox"]:has(> [data-ocsb-root]) > :not([data-ocsb-root]) {
+  display: none !important;
+}
+
+[data-ocsb-root] {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  -webkit-app-region: no-drag;
+}
+
+.ocsb-list {
+  --ocsb-text: var(--v2-text-text-base, currentColor);
+  --ocsb-muted: var(--v2-text-text-muted, color-mix(in srgb, currentColor 65%, transparent));
+  --ocsb-faint: var(--v2-text-text-faint, color-mix(in srgb, currentColor 45%, transparent));
+  --ocsb-hover: var(--v2-overlay-simple-overlay-hover, color-mix(in srgb, currentColor 8%, transparent));
+  --ocsb-pressed: var(--v2-overlay-simple-overlay-pressed, color-mix(in srgb, currentColor 12%, transparent));
+  --ocsb-line: var(--v2-border-border-muted, color-mix(in srgb, currentColor 14%, transparent));
+  --ocsb-focus: var(--v2-border-border-focus, #4c8dff);
+  --ocsb-warning: var(--v2-state-fg-warning, #d99a00);
+  --ocsb-danger: var(--v2-state-fg-danger, #e5484d);
+  --ocsb-accent: var(--v2-background-bg-accent, #4c8dff);
+
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  color: var(--ocsb-text);
+  font-size: 13px;
+  line-height: 16px;
+}
+
+.ocsb-scroll {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 4px;
+}
+
+.ocsb-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 4px;
+  min-width: 0;
+  border-radius: 8px;
+}
+
+/* A session dragged over a group. */
+.ocsb-group[data-drop] {
+  outline: 1px dashed var(--ocsb-focus);
+  outline-offset: -1px;
+  background: var(--ocsb-hover);
+}
+
+/* A section dragged over another: a line where it would land, in the gap between groups. */
+.ocsb-group[data-drop-edge]::after {
+  position: absolute;
+  inset-inline: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ocsb-focus);
+  content: "";
+  pointer-events: none;
+}
+
+.ocsb-group[data-drop-edge="before"]::after {
+  top: -6px;
+}
+
+.ocsb-group[data-drop-edge="after"]::after {
+  bottom: -6px;
+}
+
+.ocsb-group[data-dragging] {
+  opacity: 0.4;
+}
+
+.ocsb-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+/* The rows of buttons under the user's messages (messages.tsx). */
+[data-ocsb-pending],
+[data-ocsb-sent],
+.ocsb-pending {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+}
+
+/* While a button under a sent message chooses the item in the app's own message menu, that menu stays out of sight. */
+html[data-ocsb-driving] [data-component="menu-v2-content"] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/*
+ * The jump rail: one line per message of the user, at the left edge of the visible timeline, centred in its height.
+ * Its host fills the app's box over the visible timeline, which takes no pointer input; only the lines do.
+ */
+[data-ocsb-rail] {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.ocsb-rail {
+  --ocsb-rail-idle: color-mix(in srgb, var(--v2-text-text-faint, currentColor) 70%, transparent);
+  --ocsb-rail-near: var(--v2-text-text-faint, color-mix(in srgb, currentColor 45%, transparent));
+  --ocsb-rail-hover: var(--v2-text-text-muted, color-mix(in srgb, currentColor 70%, transparent));
+  --ocsb-rail-active: var(--v2-text-text-base, currentColor);
+
+  position: relative;
+  display: flex;
+  max-height: min(70%, 560px);
+  pointer-events: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* A long session's lines shrink first and then scroll, without a scrollbar. */
+.ocsb-rail-list {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-block: 6px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.ocsb-rail-list::-webkit-scrollbar {
+  display: none;
+}
+
+/* The hit area is larger than the line, so the pointer does not need to find two pixels. */
+.ocsb-rail-item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 1 10px;
+  align-items: center;
+  width: 40px;
+  min-height: 5px;
+  padding-inline-start: 10px;
+  cursor: pointer;
+}
+
+.ocsb-rail-line {
+  display: block;
+  width: 10px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ocsb-rail-idle);
+  transition:
+    width 120ms ease,
+    height 120ms ease,
+    background-color 120ms ease;
+}
+
+/* The lines beside the one under the pointer grow a little, so the pointer's place reads at a glance. */
+.ocsb-rail-item:has(+ .ocsb-rail-item:hover) .ocsb-rail-line,
+.ocsb-rail-item:hover + .ocsb-rail-item .ocsb-rail-line {
+  width: 16px;
+  background: var(--ocsb-rail-near);
+}
+
+.ocsb-rail-item[data-active] .ocsb-rail-line {
+  width: 16px;
+  background: var(--ocsb-rail-active);
+}
+
+.ocsb-rail-item:hover .ocsb-rail-line {
+  width: 24px;
+  height: 3px;
+  border-radius: 1.5px;
+  background: var(--ocsb-rail-hover);
+}
+
+.ocsb-rail-item[data-active]:hover .ocsb-rail-line {
+  background: var(--ocsb-rail-active);
+}
+
+.ocsb-rail-item:focus-visible {
+  outline: 2px solid var(--v2-border-border-focus, #4c8dff);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* The start of the message under the pointer, beside its line. */
+.ocsb-rail-tip {
+  position: absolute;
+  inset-inline-start: 100%;
+  z-index: 1;
+  margin-inline-start: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(360px, 60vw);
+  padding: 6px 10px;
+  border: 1px solid var(--v2-border-border-muted, color-mix(in srgb, currentColor 14%, transparent));
+  border-radius: 8px;
+  background: var(--v2-background-bg-layer-01, Canvas);
+  box-shadow: var(--v2-elevation-floating, 0 6px 24px rgb(0 0 0 / 0.25));
+  color: var(--v2-text-text-base, CanvasText);
+  font-size: 12px;
+  line-height: 16px;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.ocsb-rail-tip-count {
+  flex-shrink: 0;
+  color: var(--v2-text-text-faint, color-mix(in srgb, currentColor 45%, transparent));
+  font-variant-numeric: tabular-nums;
+}
+
+.ocsb-rail-tip-text {
+  display: -webkit-box;
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ocsb-rail-line {
+    transition: none;
+  }
+}
+
+/* Group header: a plain label, or a button that collapses the group. */
+.ocsb-head {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 6px;
+  width: 100%;
+  height: 24px;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ocsb-muted);
+  font: inherit;
+  font-weight: 500;
+  text-align: start;
+  cursor: default;
+}
+
+button.ocsb-head:hover {
+  color: var(--ocsb-text);
+}
+
+.ocsb-head[data-tone="warning"] {
+  color: var(--ocsb-warning);
+}
+
+.ocsb-head-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocsb-head-count {
+  flex-shrink: 0;
+  color: var(--ocsb-faint);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+.ocsb-chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 12px;
+  margin-inline-start: -2px;
+  color: var(--ocsb-faint);
+  transition: transform 0.12s ease-out;
+}
+
+.ocsb-head[data-collapsed] .ocsb-chevron {
+  transform: rotate(-90deg);
+}
+
+[dir="rtl"] .ocsb-head[data-collapsed] .ocsb-chevron {
+  transform: rotate(90deg);
+}
+
+/* Session row: title on the first line; project, status and age on the second. */
+.ocsb-row {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: default;
+}
+
+.ocsb-row:hover {
+  background: var(--ocsb-hover);
+}
+
+.ocsb-row[data-state="active"] {
+  background: var(--ocsb-pressed);
+}
+
+.ocsb-row[data-archived]:not([data-state="active"]):not(:hover) {
+  opacity: 0.55;
+}
+
+.ocsb-row[data-dragging] {
+  opacity: 0.4;
+}
+
+.ocsb-row-title {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 500;
+  letter-spacing: -0.04px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocsb-row-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--ocsb-muted);
+}
+
+.ocsb-row-project {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocsb-row-end {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  color: var(--ocsb-faint);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status mark: a dot, or a turning ring while the session runs. */
+.ocsb-status {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--ocsb-accent);
+}
+
+.ocsb-status[data-status="approval"],
+.ocsb-status[data-status="input"] {
+  background: var(--ocsb-warning);
+}
+
+.ocsb-status[data-status="failed"] {
+  background: var(--ocsb-danger);
+}
+
+.ocsb-status[data-status="working"] {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--ocsb-line);
+  border-top-color: var(--ocsb-muted);
+  background: transparent;
+  animation: ocsb-spin 0.9s linear infinite;
+}
+
+@keyframes ocsb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ocsb-status[data-status="working"] {
+    animation-duration: 4s;
+  }
+
+  .ocsb-chevron {
+    transition: none;
+  }
+}
+
+.ocsb-note {
+  padding: 6px 8px;
+  color: var(--ocsb-faint);
+}
+
+.ocsb-more {
+  align-self: flex-start;
+  margin: 0;
+  padding: 4px 8px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ocsb-muted);
+  font: inherit;
+  cursor: default;
+}
+
+.ocsb-more:hover {
+  background: var(--ocsb-hover);
+  color: var(--ocsb-text);
+}
+
+.ocsb-head:focus-visible,
+.ocsb-row:focus-visible,
+.ocsb-more:focus-visible {
+  outline: 2px solid var(--ocsb-focus);
+  outline-offset: -2px;
+}
+
+/* Right-click menu. It carries the app's menu attributes; these rules cover what those leave out. */
+.ocsb-menu {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 180px;
+  max-width: min(320px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  overflow-y: auto;
+  padding: 2px;
+  border-radius: 6px;
+  background: var(--v2-background-bg-layer-01, Canvas);
+  box-shadow: var(--v2-elevation-floating, 0 6px 24px rgb(0 0 0 / 0.25), 0 0 0 1px rgb(127 127 127 / 0.25));
+  color: var(--v2-text-text-base, CanvasText);
+  font-size: 13px;
+  -webkit-app-region: no-drag;
+}
+
+.ocsb-menu-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+  width: 100%;
+  height: 28px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--v2-text-text-base, inherit);
+  font: inherit;
+  text-align: start;
+  cursor: default;
+}
+
+.ocsb-menu-item:hover:not(:disabled),
+.ocsb-menu-item:focus-visible {
+  outline: none;
+  background: var(--v2-overlay-simple-overlay-hover, color-mix(in srgb, currentColor 10%, transparent));
+}
+
+.ocsb-menu-item:disabled {
+  opacity: 0.45;
+}
+
+.ocsb-menu-item[data-variant="critical"],
+.ocsb-menu-item[data-variant="critical"] .ocsb-menu-text {
+  color: var(--v2-state-fg-danger, #e5484d);
+}
+
+.ocsb-menu-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ocsb-menu-check {
+  flex-shrink: 0;
+  width: 12px;
+  color: var(--v2-icon-icon-muted, inherit);
+  font-size: 11px;
+  text-align: center;
+}
+
+.ocsb-menu-label {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 26px;
+  padding: 0 12px;
+  color: var(--v2-text-text-faint, color-mix(in srgb, currentColor 50%, transparent));
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ocsb-menu [data-slot="menu-v2-separator"] {
+  flex-shrink: 0;
+  width: calc(100% + 4px);
+  height: 1px;
+  margin: 2px -2px;
+  background: var(--v2-border-border-muted, color-mix(in srgb, currentColor 15%, transparent));
+}

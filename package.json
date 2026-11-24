@@ -1,0 +1,49 @@
+{
+  "name": "opencode-ui-tweaks",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "UI tweaks for OpenCode Desktop 2.3.x: sidebar sections, right-click menus, message buttons and a jump rail",
+  "license": "MIT",
+  "author": "quietwell",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quietwell/opencode-ui-tweaks.git"
+  },
+  "homepage": "https://github.com/quietwell/opencode-ui-tweaks#readme",
+  "bugs": {
+    "url": "https://github.com/quietwell/opencode-ui-tweaks/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "opencode-desktop",
+    "ui"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./gui-experimental": "./dist/gui-experimental.cjs"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vite build && tsx --test test/model.test.ts && node --conditions browser --import tsx test/menu-drive.test.mjs && node --conditions browser --import tsx test/jump.test.mjs && node test/gui-render.cjs"
+  },
+  "dependencies": {
+    "@opencode/plugin": "^2.3.2"
+  },
+  "devDependencies": {
+    "@kobalte/core": "0.13.13",
+    "@solidjs/router": "1.0.0",
+    "@types/node": "^26.6.6",
+    "jsdom": "^25.0.1",
+    "solid-js": "^1.9.18",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^7.3.7",
+    "vite-plugin-solid": "^2.11.15"
+  }
+}
