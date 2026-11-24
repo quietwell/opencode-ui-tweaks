@@ -2,6 +2,8 @@
 
 A plugin for OpenCode Desktop 2.3.x: your own sections, right-click menus and collapsible groups in the Inbox sidebar, the action buttons under your messages that 2.3 moved into a menu, and a jump rail for the messages you sent.
 
+![The sidebar with sections, Recent and Archived, and the jump rail with a message preview](assets/opencode-ui-tweaks-small.png)
+
 It is not an official OpenCode plugin. The plugin API has no extension point for the sidebar or the timeline, so parts of it rely on the app's markup and can stop working after an app update; see [How it hooks in](#how-it-hooks-in-and-what-can-break). When that happens the app's own interface shows as before. Written and tested for Desktop 2.3.2.
 
 ## What it does
